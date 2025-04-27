@@ -6,6 +6,10 @@
   padding: 0;
 }
 
+body{
+  overflow: hidden;
+}
+
 * {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;

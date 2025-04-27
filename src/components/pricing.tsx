@@ -60,7 +60,7 @@ const Pricing = () => {
         {plans &&
           plans.map((plan: Plan) => (
             <div className="pricing__card" key={plan.id}>
-              {plan.name === "Ücretsiz" && (
+              {plan.name === "Anı Topla Pro" && (
                 <span className="cal">
                   <Image src={callOut} alt="cal_out" width={152} height={54} />{" "}
                 </span>
