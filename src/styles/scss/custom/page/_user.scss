@@ -7,12 +7,13 @@
   }
 
 .user-main{
-    padding: 1rem;
-    background: #fff9e6;
-    display: flex;
-    gap: 1rem;
-    height: 100vh;
-    max-height: 100vh;
+  padding: 1rem;
+  background: #fff;
+  display: flex;
+  gap: 1rem;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -174,8 +175,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 32px);;
-  background-color: var(--color-bg);
+  min-height: calc(100vh - 32px);
+  background-color: #fff;
 }
 
 .dashboard-main {
@@ -186,7 +187,7 @@
   height: max-content;
   gap: 2rem;
   margin: auto;
-  background: var(--color-white);
+  background: #fff9e6;
   box-shadow: var(--shadow);
   border-radius: var(--radius);
   overflow: hidden;
@@ -204,7 +205,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #ffffff;
+    background: #fff;
     padding: 1rem 1.5rem;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(221, 90, 86, 0.1);

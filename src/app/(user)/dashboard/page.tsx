@@ -5,10 +5,13 @@ import Logo from "../../../../public/Logo.png";
 import Gif from "../../../../public/sew.gif";
 
 import { useAppContext } from "@/components/context";
+import Link from "next/link";
+import { Alert, Snackbar,Slide } from '@mui/material';
+import type { SlideProps } from '@mui/material';
+
 
 const DashboardPage = () => {
-
-  const {qrURL} = useAppContext();
+  const { qrURL } = useAppContext();
 
   // const handleDownloadQR = async () => {
   //   const qrWrapper = document.getElementById("qr-code");
@@ -99,11 +102,20 @@ const DashboardPage = () => {
     link.click();
   };
 
+  const [open, setOpen] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(qrURL);
+      setOpen(true);
+    } catch (err) {
+      console.error('Kopyalama başarısız:', err);
+    }
+  };
 
 
   return (
     <div className="dashboard-container">
-      
       <main className="dashboard-main">
         <section className="dashboard-card">
           <h2 className="dashboard-title">Anı Topla’ya Hoşgeldin!</h2>
@@ -122,17 +134,15 @@ const DashboardPage = () => {
           </p>
 
           <div className="dashboard-link-box">
-            <span className="dashboard-link-text">
-              {qrURL}
-            </span>
-            <button onClick={() => navigator.clipboard.writeText(qrURL)}>
+            <span className="dashboard-link-text">{qrURL}</span>
+            <button onClick={handleCopy}>
               Linki Kopyala
             </button>
           </div>
           <div className="dashboard-actions">
-            <a href={qrURL} target="_blank" rel="noopener noreferrer">
+            <Link href={"/album"}  rel="noopener noreferrer">
               Dijital Albüme Git
-            </a>
+            </Link>
           </div>
         </section>
         <section className="dashboard-qr">
@@ -151,18 +161,13 @@ const DashboardPage = () => {
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
-                backgroundColor: "#fff",
                 padding: 4,
               }}
             />
-            <QRCode
-              value={
-                "https://app.pixxjoy.com/shared-event/6802a0ea50c2190b7bf62865"
-              }
-              size={250}
-              id="qr-code"
-              errorLevel="H"
-            />
+            {qrURL && (
+              <QRCode value={qrURL} size={250} id="qr-code" errorLevel="H" />
+            )}
+
             {/* <img
               src={Logo.src}
               alt="Logo"
@@ -182,8 +187,35 @@ const DashboardPage = () => {
           <button onClick={handleDownloadQR}>QR Kodunu İndir</button>
         </section>
       </main>
+     
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+        TransitionComponent={SlideTransition}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{
+            backgroundColor: 'var(--color-bg)',
+            color: 'var(--color-primary)',
+            boxShadow: 'var(--shadow)',
+            borderRadius: 'var(--radius)',
+            fontWeight: 500,
+            fontSize: '0.95rem',
+          }}
+        >
+          Link kopyalandı!
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
 
+function SlideTransition(props:SlideProps) {
+  return <Slide {...props} direction="left" />;
+}
 export default DashboardPage;
