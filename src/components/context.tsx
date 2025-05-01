@@ -18,6 +18,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [userPlan, setUserPlan] = useState(null);
   const [authToken, setAuthToken] = useState<string | null>(Cookies.get("auth_token") || null);
+  const [qrURL, setQrUrl] = useState<string>("") 
   const router = useRouter()
 
   
@@ -87,6 +88,30 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         }
       };
       geyMyPlan()
+      const getLink = async () => {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/my-link?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-access-token": token,
+            },
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.Message || "Link alınamadı.");
+          }
+          const data = await response.json();
+          if(data.Data){
+            setQrUrl(data.Data)
+          }
+        } catch (error) {
+          console.error("GetLink hatası:", error);
+          return null;
+        }
+      };
+      getLink()
     }
   }, [authToken]);
 
@@ -124,7 +149,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     authToken,
     userPlan,
     setAuthToken,
-
+    qrURL
   };
 
   return <AppContext.Provider value={data}>{children}</AppContext.Provider>;

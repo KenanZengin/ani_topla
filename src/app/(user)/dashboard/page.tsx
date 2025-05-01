@@ -8,8 +8,7 @@ import { useAppContext } from "@/components/context";
 
 const DashboardPage = () => {
 
-  const {authToken} = useAppContext();
-  const [qrURL, setQrUrl] = useState<string>("") 
+  const {qrURL} = useAppContext();
 
   // const handleDownloadQR = async () => {
   //   const qrWrapper = document.getElementById("qr-code");
@@ -100,33 +99,7 @@ const DashboardPage = () => {
     link.click();
   };
 
-  useEffect(() =>{
-    const getLink = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/my-link?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": authToken,
-          },
-        });
-    
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.Message || "Link alınamadı.");
-        }
-        const data = await response.json();
-        if(data.Data){
-          setQrUrl(data.Data)
-        }
-      } catch (error) {
-        console.error("GetLink hatası:", error);
-        return null;
-      }
-    };
-    getLink()
-    
-  },[])
+
 
   return (
     <div className="dashboard-container">
