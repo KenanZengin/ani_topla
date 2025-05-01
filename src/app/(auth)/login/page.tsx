@@ -12,6 +12,7 @@ import Logo from "../../../../public/Logo.png";
 import { Snackbar, Alert } from "@mui/material";
 import { getRandomToken, sendLoginToBackend } from "@/utils";
 import { useRouter } from "next/navigation";
+import { useAppContext } from "@/components/context";
 
 const LoginPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -19,6 +20,8 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const {setAuthToken} = useAppContext();
+
   const signInWithEmail = async (
     email: string,
     password: string
@@ -48,13 +51,13 @@ const LoginPage: React.FC = () => {
       const idToken = await signInWithGoogle();
       const randomToken = await getRandomToken(); 
       if(randomToken){
-        const sendBack = sendLoginToBackend(idToken, randomToken);
-        if(!sendBack){
+        const user_token = await sendLoginToBackend(idToken, randomToken);
+        if(!user_token){
           setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
           setOpenSnackbar(true);
           return
         }
-        router.push("/dashboard");
+        setAuthToken(user_token)
       }
     } catch (error: any) {
       setErrorMessage(error.message);
@@ -76,13 +79,14 @@ const LoginPage: React.FC = () => {
       const idToken = await signInWithEmail(email, password);
       const randomToken = await getRandomToken(); 
       if(randomToken){
-        const sendBack = sendLoginToBackend(idToken, randomToken);
-        if(!sendBack){
+        const user_token= await sendLoginToBackend(idToken, randomToken);
+        if(!user_token){
           setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
           setOpenSnackbar(true);
           return
         }
-        router.push("/dashboard");
+        setAuthToken(user_token)
+        
       }
       console.log("randomToken", randomToken);
     } catch (err: any) {
@@ -184,7 +188,7 @@ const LoginPage: React.FC = () => {
           </div>
           <p className="login__no-account">Hesabın yok mu?</p>
           <Link href="/register" className="login__register-button">
-            Hemen Başla!
+            Kayıt Ol
           </Link>
         </div>
       </div>

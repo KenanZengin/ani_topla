@@ -17,16 +17,22 @@ const FAQSection: React.FC = () => {
       setExpanded(isExpanded ? panel : false);
     };
 
-  const answerText =
-    "Hayır! Sadece QR kodu okutun, sayfa açılacak ve hemen yükleyebilirsiniz. Her şey tarayıcı üzerinden çalışıyor.";
+  const answerTexts = [
+    "Evet! İstediğiniz kadar kopyalayabilir ve farklı yerlere yerleştirebilirsiniz. Misafirleriniz her yerden kolayca erişebilir.",
+    "Her etkinlik için yeni bir QR kod oluşturulur. Böylece her etkinlikte anılar ayrı ve düzenli kalır.",
+    "Hayır, tüm fotoğraf ve videolar yüksek çözünürlükte korunur.",
+    "Hayır. Fotoğraflar yalnızca etkinlik sahibi tarafından görüntülenebilir. Dışarıya açık bir galeri oluşturulmaz.",
+    "Evet, verilerimiz güvenli sunucularda şifrelenerek saklanır. Üçüncü kişilerle paylaşılmaz.",
+    "Fotoğraflar 1 gün içinde indirilmezse sistemden silinir. Anılarınızı kaybetmemek için hızlıca indirmenizi öneririz.",
+  ];
 
   const questions = [
-    "Uygulama indirmem gerekiyor mu?",
-    "Herkes mi fotoğraf yükleyebilir?",
-    "Ne kadar fotoğraf yüklenebilir?",
-    "Fotoğraflar ne kadar süreyle saklanır?",
-    "Yüklenen fotoğrafları kimler görebiliyor?",
-    "Hangi dosya türleri destekleniyor?",
+    "QR kodu birden fazla yere koyabilir miyim?",
+    "Birden fazla etkinlik için aynı QR kodu kullanılabilir mi?",
+    "Yüklenen içeriklerin kalitesi düşüyor mu?",
+    "Fotoğraflar herkesin erişimine açık mı?",
+    "Fotoğraflar güvenli bir şekilde mi saklanıyor?",
+    "Ücretsiz planda yüklenen fotoğraflar sonradan kurtarılabilir mi?",
   ];
 
   return (
@@ -62,7 +68,7 @@ const FAQSection: React.FC = () => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography className="faq__answer">{answerText}</Typography>
+            <Typography className="faq__answer">{answerTexts[index]}</Typography>
           </AccordionDetails>
         </Accordion>
       ))}

@@ -1,3 +1,4 @@
+import { User } from "@/type";
 import Cookies from "js-cookie";
 
 export const getRandomToken = async (): Promise<string> => {
@@ -15,7 +16,7 @@ export const getRandomToken = async (): Promise<string> => {
 };
 
 
-export const sendLoginToBackend = async (idToken: string, randomToken: string): Promise<void> => {
+export const sendLoginToBackend = async (idToken: string, randomToken: string): Promise<{ token: string; user: User } | null> => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/token/mobile`, {
     method: "POST",
     headers: {
@@ -37,7 +38,6 @@ export const sendLoginToBackend = async (idToken: string, randomToken: string): 
   if (token && user) {
     Cookies.set("auth_token", token, { expires: 3 }); 
     localStorage.setItem("user", JSON.stringify(user));
-    console.log("Token cookie'ye kaydedildi:", token);
   } else {
     throw new Error("Token verisi bulunamadı.");
   }

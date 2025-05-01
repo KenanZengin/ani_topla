@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
               ></path>
             </svg>
           </Link>
-          <Link href="#">
+          <Link href="https://www.instagram.com/anitopla.co/" target="_blank">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

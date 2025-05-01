@@ -12,6 +12,7 @@
     align-items: center;
     img {
       margin-right: 3rem;
+      object-fit: contain;
     }
   }
 
@@ -551,6 +552,10 @@
       transition: background-color 0.3s ease;
       width: 100%;
       min-height: 48px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:hover {
         background-color: #f79009;
       }

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../../public/Logo.png";
 import Link from "next/link";
 import WeddingSlider from "@/components/slider";
@@ -20,8 +20,13 @@ import img10 from "../../public/avatar3.png";
 import img11 from "../../public/avatar4.png";
 import img12 from "../../public/avatar5.png";
 import img13 from "../../public/avatar6.png";
+import ContactModal from "@/components/contact-modal";
+import Footer from "@/backbone/footer";
 
 const HomePage: React.FC = () => {
+
+  const [open, setOpen] = useState(false);
+
   return (
     <>
       <header className="header-navbar">
@@ -48,8 +53,8 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="header-navbar__right">
-            <Link href={"/"} className="header-navbar__contact-button">
-              İletişime Geç
+            <Link href={"/login"} className="header-navbar__contact-button">
+              Şimdi deneyimle
             </Link>
           </div>
         </div>
@@ -57,10 +62,10 @@ const HomePage: React.FC = () => {
       <main>
         <section className="hero-section">
           <div className="hero-section__content container-g">
-            <h1 className="hero-section__title">
-              Düğününüze Gelen Herkesten <br />
-              <span className="hero-section__highlight">Fotoğraf</span>{" "}
-              Toplamanın En Kolay Yolu!
+            <h1 className="hero-section__title">  
+              Anıların dağılmasın, hepsi <br />
+              <span className="hero-section__highlight">Anı Topla’da</span>{" "}
+              toplansın!
             </h1>
             <p className="hero-section__subtitle">
               We’re a full-service interior design agency who specialize in
@@ -74,11 +79,10 @@ const HomePage: React.FC = () => {
             <div className="how-it-works__header">
               <p className="how-it-works__small-title">Nasıl Çalışır?</p>
               <h2 className="how-it-works__main-title">
-                Anı Toplamak Bu Kadar Kolay!
+                Anı Toplamak Hiç Bu Kadar Kolay Olmamıştı!
               </h2>
               <p className="how-it-works__description">
-                Misafirleriniz QR kodu okutsun, fotoğraflarını yüklesin, siz de
-                tüm anılara tek yerden ulaşın. 4 adımda tüm kareler elinizde!
+                Misafirleriniz QR kodu okutsun, fotoğraf ve videolarını yüklesin, siz de tüm anılara zahmetsizce ulaşın. 4 adımda tüm kareler sizinle!
               </p>
             </div>
 
@@ -119,8 +123,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <h3 className="how-it-works__card-title">QR Kodunu Okut</h3>
                 <p className="how-it-works__card-description">
-                  Her masaya veya girişe koyduğunuz QR kodu ile misafirler
-                  kolayca sayfayı açar.
+                  Her masaya veya girişe yerleştirdiğiniz kişisel QR kod sayesinde misafirleriniz sayfayı kolayca açar.
                 </p>
               </div>
 
@@ -160,10 +163,10 @@ const HomePage: React.FC = () => {
                     ></path>
                   </svg>
                 </div>
-                <h3 className="how-it-works__card-title">Fotoğrafları Yükle</h3>
+                <h3 className="how-it-works__card-title">Fotoğrafları ve Videoları Yükle</h3>
                 <p className="how-it-works__card-description">
-                  Telefonlarındaki fotoğrafları tek tıkla yüklerler. Uygulama
-                  yok, üyelik yok, anılar yüklenir.
+                  Misafirler telefonlarındaki fotoğraf ve videoları tek tıkla yükler.
+                  Uygulama indirimi yok, üyelik yok. Sadece anılar yüklenir.
                 </p>
               </div>
 
@@ -203,8 +206,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <h3 className="how-it-works__card-title">Siz Görüntüleyin</h3>
                 <p className="how-it-works__card-description">
-                  Etkinlik sahibine özel panelden yüklenen tüm kareleri tek tek
-                  görebilirsiniz.
+                  Etkinlik sahibine özel panele giriş yapın, yüklenen tüm kareleri kolayca görün ve yönetin.
                 </p>
               </div>
 
@@ -253,8 +255,8 @@ const HomePage: React.FC = () => {
                   Tüm Kareler Sizinle Kalsın
                 </h3>
                 <p className="how-it-works__card-description">
-                  Artık "bana da atar mısın" devri bitti. Herkesin kamerası size
-                  çalışıyor.
+                  Artık "bana da atar mısın?" devri kapandı!
+                  Etkinlikte herkesin kamerası sizin için çalışıyor.
                 </p>
               </div>
             </div>
@@ -266,9 +268,8 @@ const HomePage: React.FC = () => {
               <p className="what-see__small-title">Siz Neler Görüyorsunuz?</p>
               <h2 className="what-see__main-title">Siz Neler Görüyorsunuz?</h2>
               <p className="what-see__description">
-                Google Drive benzeri basit bir panel üzerinden, tüm etkinlik
-                fotoğraflarınızı <br /> güvenle ve düzenli şekilde görüntüleyin.
-                Dosya kaosu? Artık yok.
+                Etkinliğinize ait tüm fotoğraf ve videoları tek bir yerde, güvenli ve düzenli bir panel üzerinden kolayca görüntüleyin. <br />
+                Dosya karmaşasına son verin, anılarınıza zahmetsizce ulaşın.
               </p>
             </div>
             <section className="gallery">
@@ -303,11 +304,10 @@ const HomePage: React.FC = () => {
             <div className="plan__header">
               <p className="plan__small-title">Fiyatlandırma</p>
               <h2 className="plan__main-title">
-                Her bütçeye uygun bir anı planı
+                Her etkinlik için esnek ve adil planlar!
               </h2>
               <p className="plan__description">
-                İster küçük bir kutlama, ister büyük bir düğün... Anılarınızı
-                saklamak için esnek ve adil planlarımız var.
+                İster küçük bir anı, ister büyük bir gün… Tüm anılarınız güvenle saklansın.
               </p>
             </div>
             <div className="plans-card">
@@ -412,7 +412,7 @@ const HomePage: React.FC = () => {
             Aradığınız cevabı bulamıyor musunuz? Lütfen güler yüzlü ekibimizle
             iletişime geçin.
           </p>
-          <button className="contact-banner__button">İletişime Geç</button>
+          <button className="contact-banner__button" onClick={() => setOpen(true)}>İletişime Geç</button>
         </section>
       </main>
       <div className="header-bg">
@@ -492,6 +492,8 @@ const HomePage: React.FC = () => {
           </defs>
         </svg>
       </div>
+      <Footer />
+      <ContactModal open={open} handleClose={() => setOpen(false)} />
     </>
   );
 };

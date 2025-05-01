@@ -12,6 +12,7 @@ import Logo from "../../../../public/Logo.png";
 import { Snackbar, Alert } from "@mui/material";
 import { getRandomToken, sendLoginToBackend } from "@/utils";
 import { useRouter } from "next/navigation";
+import { useAppContext } from "@/components/context";
 
 const RegisterPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -19,6 +20,7 @@ const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const {setAuthToken} = useAppContext()
   const signUpWithEmail = async (
     email: string,
     password: string
@@ -48,13 +50,14 @@ const RegisterPage: React.FC = () => {
       const idToken = await signUpWithGoogle();
       const randomToken = await getRandomToken();
       if (randomToken) {
-        const sendBack = sendLoginToBackend(idToken, randomToken);
-        if (!sendBack) {
+        const user_token = await sendLoginToBackend(idToken, randomToken);
+        
+        if (!user_token) {
           setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
           setOpenSnackbar(true);
           return
         }
-        router.push("/dashboard");
+        setAuthToken(user_token)
       }
     } catch (error: any) {
       setErrorMessage(error.message);
@@ -76,13 +79,13 @@ const RegisterPage: React.FC = () => {
       const idToken = await signUpWithEmail(email, password);
       const randomToken = await getRandomToken();
       if (randomToken) {
-        const sendBack = sendLoginToBackend(idToken, randomToken);
-        if (!sendBack) {
+        const user_token = await sendLoginToBackend(idToken, randomToken);
+        if (!user_token) {
           setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
           setOpenSnackbar(true);
           return
         }
-        router.push("/dashboard");
+        setAuthToken(user_token)
       }
     } catch (err: any) {
       let message = "Bilinmeyen bir hata oluştu.";

@@ -3,56 +3,16 @@
 import Image from "next/image";
 import callOut from "../../public/call.png";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import {  useAppContext } from "./context";
+import { Plan } from "@/type";
 
-interface PlanRule {
-  maxFile: number | null;
-  maxFileDuration: number;
-  maxUploadDuration: number;
-  maxFileUploadBeforeEvent: number;
-}
 
-interface Plan {
-  name: string;
-  id: string;
-  price_id: string;
-  price: number;
-  currency: string;
-  formattedPrice: string;
-  benefits: string[];
-  rules: PlanRule;
-}
 
 const Pricing = () => {
-  const [plans, setPlans] = useState<Plan[]>([]);
+  
+  const { plans } = useAppContext();
 
-  useEffect(() => {
-    const getPlans = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/plans?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Sunucu hatası: " + response.status);
-        }
-
-        const data = await response.json();
-        console.log("Planlar:", data.Data);
-        setPlans(data.Data);
-        return data;
-      } catch (error) {
-        console.error("Planlar alınamadı:", error);
-        return null;
-      }
-    };
-    getPlans();
-  }, []);
 
   return (
     <section className="pricing">
@@ -91,7 +51,7 @@ const Pricing = () => {
                   </li>
                 ))}
               </ul>
-              <button className="pricing__button">Get started</button>
+              <Link href={"/login"} className="pricing__button">Get started</Link>
             </div>
           ))}
       </div>
