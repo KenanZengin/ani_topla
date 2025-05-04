@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </header>
-      <main>
+      <main className="main">
         <section className="hero-section">
           <div className="hero-section__content container-g">
             <h1 className="hero-section__title">  

@@ -9,18 +9,13 @@ import {
 } from "firebase/auth";
 import { auth } from "../../../firebase";
 import Logo from "../../../../public/Logo.png";
-import { Snackbar, Alert } from "@mui/material";
 import { getRandomToken, sendLoginToBackend } from "@/utils";
-import { useRouter } from "next/navigation";
 import { useAppContext } from "@/components/context";
 
 const RegisterPage: React.FC = () => {
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
-  const {setAuthToken} = useAppContext()
+  const { setAuthToken, setGlobalSnackbar } = useAppContext();
   const signUpWithEmail = async (
     email: string,
     password: string
@@ -51,17 +46,29 @@ const RegisterPage: React.FC = () => {
       const randomToken = await getRandomToken();
       if (randomToken) {
         const user_token = await sendLoginToBackend(idToken, randomToken);
-        
         if (!user_token) {
-          setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
-          setOpenSnackbar(true);
-          return
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş İşlemi başarısız daha sonra tekrar deneyin.",
+            mode: "error",
+          });
+          return;
         }
-        setAuthToken(user_token)
+        setAuthToken(user_token);
+        setTimeout(() => {
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş başarılı. Hoş geldiniz!",
+            mode: "success",
+          });
+        }, 1000);
       }
     } catch (error: any) {
-      setErrorMessage(error.message);
-      setOpenSnackbar(true);
+      setGlobalSnackbar({
+        state: true,
+        mess: "Giriş İşlemi başarısız daha sonra tekrar deneyin.",
+        mode: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -81,11 +88,21 @@ const RegisterPage: React.FC = () => {
       if (randomToken) {
         const user_token = await sendLoginToBackend(idToken, randomToken);
         if (!user_token) {
-          setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
-          setOpenSnackbar(true);
-          return
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş İşlemi başarısız daha sonra tekrar deneyin.",
+            mode: "error",
+          });
+          return;
         }
-        setAuthToken(user_token)
+        setAuthToken(user_token);
+        setTimeout(() => {
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş başarılı. Hoş geldiniz!",
+            mode: "success",
+          });
+        }, 1000);
       }
     } catch (err: any) {
       let message = "Bilinmeyen bir hata oluştu.";
@@ -111,121 +128,105 @@ const RegisterPage: React.FC = () => {
             message = "Bir hata oluştu: " + err.message;
         }
       }
-      setErrorMessage(message);
-      setOpenSnackbar(true);
+      setGlobalSnackbar({
+        state: true,
+        mess: message,
+        mode: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
-
   return (
-    <div className="register">
-      <div className="register__container">
-        <div className="register__left">
-          <h2 className="register__title">Kaydol</h2>
-          <form className="register__form" onSubmit={handleSubmit}>
+    <div className="auth">
+      <div className="auth__container">
+        <div className="auth__left">
+          <h2 className="auth__title">Kaydol</h2>
+          <form className="auth__form" onSubmit={handleSubmit}>
             <input
               name="fullname"
               type="text"
               placeholder="Tam Ad"
-              className="register__input"
+              className="auth__input"
               required
             />
             <input
               name="email"
               type="email"
               placeholder="E-posta"
-              className="register__input"
+              className="auth__input"
               required
             />
-            <div className="register__password-wrapper">
+            <div className="auth__password-wrapper">
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Şifre"
-                className="register__input"
+                className="auth__input"
                 required
               />
               <span
-                className="register__eye-icon"
+                className="auth__eye-icon"
                 onClick={() => setShowPassword((prev) => !prev)}
                 style={{ cursor: "pointer" }}
               >
                 {showPassword ? "🙈" : "👁️"}
               </span>
             </div>
-            <div className="register__agreement">
+
+            <div className="auth__agreement">
               <input
                 type="checkbox"
                 id="agreement"
-                className="register__checkbox"
+                className="auth__checkbox"
                 required
               />
-              <label htmlFor="agreement">
-                <a href="#" className="register__link">
+              <label htmlFor="agreement" style={{ marginLeft: "8px" }}>
+                <a href="#" className="auth__link">
                   Kullanıcı Sözleşmesini
                 </a>{" "}
                 ve
-                <a href="#" className="register__link">
+                <a href="#" className="auth__link">
                   {" "}
                   Kişisel Veriler
                 </a>{" "}
                 Hakkındaki Protokolü okudum, kabul ediyorum
               </label>
             </div>
+
             <button
               type="submit"
-              className="register__button"
+              className="auth__button"
               disabled={loading}
               style={{ opacity: loading ? "0.7" : "1" }}
             >
               Kaydol
             </button>
+
             <button
               type="button"
-              className="register__google-button"
+              className="auth__google-button"
               onClick={handleGoogleSignUp}
               disabled={loading}
               style={{ opacity: loading ? "0.7" : "1" }}
             >
-              <img
-                src="https://developers.google.com/identity/images/g-logo.png"
-                alt="Google logo"
-                className="register__google-icon"
-              />
+              <Image src={"/google.png"} alt="google" width={24} height={24} />
               Google ile Kaydol
             </button>
           </form>
         </div>
 
-        <div className="register__right">
-          <div className="register__brand">
+        <div className="auth__right">
+          <div className="auth__brand">
             <Image src={Logo} alt="logo" width={200} height={200} />
           </div>
-          <p className="register__have-account">Zaten bir hesabın var mı?</p>
-          <Link href="/login" className="register__login-button">
+          <p className="auth__no-account">Zaten bir hesabın var mı?</p>
+          <Link href="/login" className="auth__register-button">
             Giriş Yap
           </Link>
         </div>
       </div>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
     </div>
   );
 };

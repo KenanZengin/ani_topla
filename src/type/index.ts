@@ -32,3 +32,10 @@ export interface User {
   st_dev_id: string | null;
   st_live_id: string | null;
 }
+
+type SnackbarMode = "success" | "error" | "info" | "warning";
+export interface GlobalSnackbarState {
+  state: boolean;
+  mess: string;
+  mode: SnackbarMode;
+}

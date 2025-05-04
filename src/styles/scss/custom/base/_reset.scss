@@ -6,20 +6,32 @@
   padding: 0;
 }
 
-body{
-  overflow-x: hidden;
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f4f6; 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dd5a56; 
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: ora; 
 }
 
 * {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
+  scrollbar-width: thin;
+  scrollbar-color: #dd5a56 #f3f4f6;
 }
 
-*::-webkit-scrollbar {
-  -webkit-appearance: none;
-  width: 0;
-  height: 0;
-}
 
 img,
 picture,

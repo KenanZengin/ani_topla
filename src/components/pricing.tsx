@@ -6,13 +6,16 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {  useAppContext } from "./context";
 import { Plan } from "@/type";
+import { usePathname } from "next/navigation";
 
 
 
 const Pricing = () => {
   
-  const { plans } = useAppContext();
-
+  const pathName = usePathname();
+  const { plans, userPlan } = useAppContext();
+  console.log("pathname:",pathName);
+  
 
   return (
     <section className="pricing">
@@ -51,7 +54,11 @@ const Pricing = () => {
                   </li>
                 ))}
               </ul>
-              <Link href={"/login"} className="pricing__button">Get started</Link>
+              {pathName !== "/" && userPlan?.id === plan.id 
+                ?<p className="pricing__button">Mevcut Plan</p>
+                :<Link href={"/login"} className="pricing__button">Bu planı Seç</Link>
+                }
+              
             </div>
           ))}
       </div>

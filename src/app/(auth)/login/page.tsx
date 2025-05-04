@@ -11,16 +11,12 @@ import { auth } from "../../../firebase";
 import Logo from "../../../../public/Logo.png";
 import { Snackbar, Alert } from "@mui/material";
 import { getRandomToken, sendLoginToBackend } from "@/utils";
-import { useRouter } from "next/navigation";
 import { useAppContext } from "@/components/context";
 
 const LoginPage: React.FC = () => {
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
-  const {setAuthToken} = useAppContext();
+  const { setAuthToken,setGlobalSnackbar } = useAppContext();
 
   const signInWithEmail = async (
     email: string,
@@ -49,19 +45,32 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       const idToken = await signInWithGoogle();
-      const randomToken = await getRandomToken(); 
-      if(randomToken){
+      const randomToken = await getRandomToken();
+      if (randomToken) {
         const user_token = await sendLoginToBackend(idToken, randomToken);
-        if(!user_token){
-          setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
-          setOpenSnackbar(true);
-          return
+        if (!user_token) {
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş İşlemi başarısız daha sonra tekrar deneyin.",
+            mode: "error",
+          });
+          return;
         }
-        setAuthToken(user_token)
+        setAuthToken(user_token);
+        setTimeout(() => {
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş başarılı. Hoş geldiniz!",
+            mode: "success",
+          });
+        }, 1000);
       }
     } catch (error: any) {
-      setErrorMessage(error.message);
-      setOpenSnackbar(true);
+      setGlobalSnackbar({
+        state: true,
+        mess: "Giriş İşlemi başarısız daha sonra tekrar deneyin.",
+        mode: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -77,22 +86,31 @@ const LoginPage: React.FC = () => {
 
     try {
       const idToken = await signInWithEmail(email, password);
-      const randomToken = await getRandomToken(); 
-      if(randomToken){
-        const user_token= await sendLoginToBackend(idToken, randomToken);
-        if(!user_token){
-          setErrorMessage("Giriş İşlemi başarısız daha sonra tekrar deneyin.");
-          setOpenSnackbar(true);
-          return
+      const randomToken = await getRandomToken();
+      if (randomToken) {
+        const user_token = await sendLoginToBackend(idToken, randomToken);
+        if (!user_token) {
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş İşlemi başarısız daha sonra tekrar deneyin.",
+            mode: "error",
+          });
+          return;
         }
-        setAuthToken(user_token)
-        
+        setAuthToken(user_token);
+        setTimeout(() => {
+          setGlobalSnackbar({
+            state: true,
+            mess: "Giriş başarılı. Hoş geldiniz!",
+            mode: "success",
+          });
+        }, 1000);
       }
       console.log("randomToken", randomToken);
     } catch (err: any) {
       let message = "Bilinmeyen bir hata oluştu.";
-      console.log("err.code",err.code);
-      
+      console.log("err.code", err.code);
+
       if (err.code) {
         switch (err.code) {
           case "auth/user-not-found":
@@ -111,55 +129,54 @@ const LoginPage: React.FC = () => {
             message = "Bir hata oluştu: " + err.message;
         }
       }
-      setErrorMessage(message);
-      setOpenSnackbar(true);
+      setGlobalSnackbar({
+        state: true,
+        mess: message,
+        mode: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
-
   return (
-    <div className="login">
-      <div className="login__container">
-        <div className="login__left">
-          <h2 className="login__title">Giriş Yap</h2>
-          <form className="login__form" onSubmit={handleSubmit}>
+    <div className="auth">
+      <div className="auth__container">
+        <div className="auth__left">
+          <h2 className="auth__title">Giriş Yap</h2>
+          <form className="auth__form" onSubmit={handleSubmit}>
             <input
               name="email"
               type="email"
               placeholder="E-posta"
-              className="login__input"
+              className="auth__input"
               required
             />
-            <div className="login__password-wrapper">
+            <div className="auth__password-wrapper">
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Şifre"
-                className="login__input"
+                className="auth__input"
                 required
               />
               <span
-                className="login__eye-icon"
+                className="auth__eye-icon"
                 onClick={() => setShowPassword((prev) => !prev)}
                 style={{ cursor: "pointer" }}
               >
                 {showPassword ? "🙈" : "👁️"}
               </span>
             </div>
-            <div className="login__forgot">
+            <div className="auth__forgot">
               Şifreni mi{" "}
-              <Link href={"forgot-password"} className="login__link">
+              <Link href={"forgot-password"} className="auth__link">
                 unuttun?
               </Link>
             </div>
             <button
               type="submit"
-              className="login__button"
+              className="auth__button"
               disabled={loading}
               style={{ opacity: loading ? 0.7 : 1 }}
             >
@@ -167,7 +184,7 @@ const LoginPage: React.FC = () => {
             </button>
             <button
               type="button"
-              className="login__google-button"
+              className="auth__google-button"
               onClick={handleGoogleLogin}
               disabled={loading}
               style={{ opacity: loading ? 0.7 : 1 }}
@@ -175,38 +192,23 @@ const LoginPage: React.FC = () => {
               <img
                 src="https://developers.google.com/identity/images/g-logo.png"
                 alt="Google logo"
-                className="login__google-icon"
+                className="auth__google-icon"
               />
               Google ile Giriş Yap
             </button>
           </form>
         </div>
 
-        <div className="login__right">
-          <div className="login__brand">
+        <div className="auth__right">
+          <div className="auth__brand">
             <Image src={Logo} alt="logo" width={200} height={200} />
           </div>
-          <p className="login__no-account">Hesabın yok mu?</p>
-          <Link href="/register" className="login__register-button">
+          <p className="auth__no-account">Hesabın yok mu?</p>
+          <Link href="/register" className="auth__register-button">
             Kayıt Ol
           </Link>
         </div>
       </div>
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
     </div>
   );
 };

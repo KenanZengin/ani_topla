@@ -1,0 +1,93 @@
+.album-page {
+  background: #fff4ee;
+  padding: 32px;
+  border-radius: 12px;
+  &__topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e14c47;
+  }
+
+  &__select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  &__card {
+    background: #fff;
+    border: 1px solid #f2d5d1;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+  }
+
+  &__info {
+    padding: 10px;
+    font-size: 13px;
+    color: #333;
+    text-align: center;
+  }
+
+  &__download-btn {
+    margin-top: 6px;
+    background: #f59e0b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  &__download-all {
+    background: #e14c47;
+    color: white;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  &__button {
+    background: #e14c47;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}

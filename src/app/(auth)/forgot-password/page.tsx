@@ -3,20 +3,21 @@ import React, { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { Snackbar, Alert } from "@mui/material";
+import Image from "next/image";
+import Link from "next/link";
+import Logo from "../../../../public/Logo.png";
+import { useAppContext } from "@/components/context";
 
-const ForgotPasswordPage: React.FC = () => {
+const ForgotPasswordPage = () => {
   const [email, setEmail] = useState<string>("");
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string>("");
+  const {setGlobalSnackbar} = useAppContext();
 
   const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await sendPasswordResetEmail(auth, email);
-      setSuccessMessage(
-        "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."
-      );
       setOpenSnackbar(true);
     } catch (error: any) {
       let message = "Bilinmeyen bir hata oluştu.";
@@ -32,37 +33,56 @@ const ForgotPasswordPage: React.FC = () => {
             message = "Hata: " + error.message;
         }
       }
-      setErrorMessage(message);
-      setOpenSnackbar(true);
+      setGlobalSnackbar({
+        state: true,
+        mess: message,
+        mode: "error",
+      });
     }
   };
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
     setErrorMessage("");
-    setSuccessMessage("");
   };
 
   return (
-    <div className="forgot-password">
-      <div className="forgot-password__container">
-        <h2 className="forgot-password__title">Şifremi Unuttum</h2>
-        <form className="forgot-password__form" onSubmit={handleResetPassword}>
-          <input
-            type="email"
-            name="email"
-            placeholder="E-posta adresinizi giriniz"
-            className="forgot-password__input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <button type="submit" className="forgot-password__button">
-            Şifre Sıfırlama Bağlantısı Gönder
-          </button>
-        </form>
-      </div>
+    <div className="auth">
+      <div className="auth__container">
+        <div className="auth__left">
+          <h2 className="auth__title">Şifremi Unuttum</h2>
 
+          <form className="auth__form" onSubmit={handleResetPassword}>
+            <input
+              type="email"
+              name="email"
+              placeholder="E-posta adresinizi giriniz"
+              className="auth__input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <button
+              type="submit"
+              className="auth__button"
+              disabled={!email.trim()}
+            >
+              Şifre Sıfırlama Bağlantısı Gönder
+            </button>
+          </form>
+        </div>
+
+        <div className="auth__right">
+          <div className="auth__brand">
+            <Image src={Logo} alt="logo" width={200} height={200} />
+          </div>
+          <p className="auth__no-account">Hesabın var mı?</p>
+          <Link href="/login" className="auth__register-button">
+            Giriş Yap
+          </Link>
+        </div>
+      </div>
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
@@ -74,7 +94,9 @@ const ForgotPasswordPage: React.FC = () => {
           severity={errorMessage ? "error" : "success"}
           sx={{ width: "100%" }}
         >
-          {errorMessage || successMessage}
+          {errorMessage
+            ? errorMessage
+            : "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."}
         </Alert>
       </Snackbar>
     </div>

@@ -7,8 +7,9 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { Plan, User } from "@/type";
+import { GlobalSnackbarState, Plan, User } from "@/type";
 import { useRouter } from "next/navigation";
+import GlobalSnackbar from "./global-snackbar";
 
 const AppContext = createContext<any>(null);
 
@@ -17,9 +18,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [userPlan, setUserPlan] = useState(null);
+  const [userEvent, setUserEvent] = useState(null);
   const [authToken, setAuthToken] = useState<string | null>(Cookies.get("auth_token") || null);
-  const [qrURL, setQrUrl] = useState<string>("") 
-  const router = useRouter()
+  const [qrURL, setQrUrl] = useState<string>(""); 
+  const [planModal, setPlanModal] = useState(false);
+  const [globalSnackBar, setGlobalSnackbar] = useState<GlobalSnackbarState>({
+    state: false,
+    mess: "",
+    mode: "success"
+  });
+  const router = useRouter();
 
   
   const checkUser = () => {
@@ -45,49 +53,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const token = checkUser();
     
     if (token) {
-      const getMyEvent = async () => {
-        try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/event`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-access-token": token
-            },
-          });
-
-          const data = await response.json();
-          if(!data.Data.date || !data.Data.title){
-            router.push("/create-event")
-          }else{
-            router.push("/dashboard")
-          }
-          
-          return data;
-        } catch (error) {
-          console.error("Event çekilemedi:", error);
-          return null;
-        }
-      };
-      getMyEvent()
-      const geyMyPlan = async () => {
-        try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/my-plan?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-access-token": token
-            },
-          });
-
-          const data = await response.json();
-          setUserPlan(data.Data)
-          return data;  
-        } catch (error) {
-          console.error("Event çekilemedi:", error);
-          return null;
-        }
-      };
-      geyMyPlan()
       const getLink = async () => {
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/my-link?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}`, {
@@ -111,7 +76,47 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           return null;
         }
       };
-      getLink()
+      
+      const fetchDataUser = async () => {
+        try {
+          const eventRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/event`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-access-token": token
+            },
+          });
+    
+          const eventData = await eventRes.json();
+          setUserEvent(eventData.Data);
+          if(!eventData.Data.date || !eventData.Data.title){
+            router.push("/create-event")
+          }else{
+            router.push("/dashboard")
+          }
+    
+          const planRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/my-plan?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-access-token": token
+            },
+          });
+    
+          const planData = await planRes.json();
+          setUserPlan(planData.Data);
+    
+          if (planData.Data?.id === "free" && (eventData.Data?.title || eventData.Data?.date)) {
+            setPlanModal(true);
+          }
+    
+        } catch (error) {
+          console.error("Veriler çekilemedi:", error);
+        }
+      };
+    
+      fetchDataUser();
+      getLink();
     }
   }, [authToken]);
 
@@ -148,11 +153,22 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     user,
     authToken,
     userPlan,
+    userEvent,
     setAuthToken,
-    qrURL
+    qrURL,
+    setPlanModal,
+    planModal,
+    globalSnackBar, 
+    setGlobalSnackbar
   };
 
-  return <AppContext.Provider value={data}>{children}</AppContext.Provider>;
+  return(
+    <AppContext.Provider value={data}>
+      {children}
+      <GlobalSnackbar />
+    </AppContext.Provider>
+  )
+    
 };
 
 export const useAppContext = () => {

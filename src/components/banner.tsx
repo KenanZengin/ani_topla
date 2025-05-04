@@ -1,15 +1,14 @@
-"use client"
+"use client";
 
 import { useState } from "react";
-import { Close, InfoOutlined } from "@mui/icons-material";
 import { useAppContext } from "./context";
+import { Close, InfoOutlined } from "@mui/icons-material";
 const Banner = () => {
-
-  const {userPlan} = useAppContext();
+  const { userPlan, setPlanModal } = useAppContext();
   const [visible, setVisible] = useState(true);
   return (
     <>
-     {visible && userPlan?.id === "free" && (
+      {visible && userPlan?.id === "free" && (
         <div className="top-banner">
           <div className="top-banner__left">
             <InfoOutlined className="top-banner__icon" />
@@ -21,7 +20,12 @@ const Banner = () => {
           </div>
 
           <div className="top-banner__right">
-            <button className="top-banner__button">Planı Yükselt</button>
+            <button
+              className="top-banner__button"
+              onClick={() => setPlanModal(true)}
+            >
+              Planı Yükselt
+            </button>
             <Close
               className="top-banner__close"
               onClick={() => setVisible(false)}
@@ -30,7 +34,7 @@ const Banner = () => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Banner
+export default Banner;
