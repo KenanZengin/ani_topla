@@ -1,36 +1,123 @@
 "use client";
 
 import Image from "next/image";
-import callOut from "../../public/call.png";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import {  useAppContext } from "./context";
+import { useAppContext } from "./context";
+import { usePathname, useRouter } from "next/navigation";
+import callOut from "../../public/call.png";
 import { Plan } from "@/type";
-import { usePathname } from "next/navigation";
 
 
+type PricingProps = {
+  refPlans?: Plan[];
+  setRefPlans?: React.Dispatch<React.SetStateAction<Plan[] | null>>;
+};
 
-const Pricing = () => {
-  
+const Pricing = ({ refPlans, setRefPlans }: PricingProps) => {
   const pathName = usePathname();
-  const { plans, userPlan } = useAppContext();
-  console.log("pathname:",pathName);
-  
+  const router = useRouter();
+  const { plans, userPlan, authToken, setGlobalSnackbar } = useAppContext();
+
+  const [refCode, setRefCode] = useState("");
+  const [checkingRef, setCheckingRef] = useState(false);
+
+
+  const handlePlanSelect = async (productId: string) => {
+    if (!authToken) return router.push("/login");
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": authToken,
+          },
+          body: JSON.stringify({
+            devKey: process.env.NEXT_PUBLIC_DEV_KEY,
+            productId,
+            mode: "payment",
+            devSuccessUrl: `${window.location.origin}/payment-success`,
+            devCancelUrl: `${window.location.origin}/payment-fail`,
+            ...(refCode && refPlans && refPlans?.length > 0 && { refCode }),
+          }),
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.Data.url) window.location.href = data.Data.url;
+      } else {
+        setGlobalSnackbar({
+          state: true,
+          mess: "Lütfen daha sonra tekrar deneyin.",
+          mode: "error",
+        });
+      }
+    } catch (err) {
+      setGlobalSnackbar({
+        state: true,
+        mess: "Lütfen daha sonra tekrar deneyin.",
+        mode: "error",
+      });
+    }
+  };
+
+  const handleCheckRefCode = async () => {
+    if (!refCode) return;
+    setCheckingRef(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/ref-code?refCode=${refCode}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": authToken,
+          },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.Data && setRefPlans) {
+          setRefPlans(data?.Data || []);
+        } else {
+          setGlobalSnackbar({
+            state: true,
+            mess: "Geçersiz referans kodu!",
+            mode: "error",
+          });
+        }
+      } else {
+        setGlobalSnackbar({
+          state: true,
+          mess: "Geçersiz referans kodu!",
+          mode: "error",
+        });
+      }
+    } catch (err) {
+      console.error("Ref kod doğrulama hatası:", err);
+    } finally {
+      setCheckingRef(false);
+    }
+  };
+
+  const displayedPlans = refPlans || plans;
 
   return (
     <section className="pricing">
-      <div className="pricing__grid">
-        {plans &&
-          plans.map((plan: Plan) => (
+      <div className="pricing__grid" style={{gridTemplateColumns: displayedPlans.length > 2 ? "repeat(3, 1fr)" : "repeat(2, 1fr)"}}>
+        {displayedPlans &&
+          displayedPlans.map((plan: Plan) => (
             <div className="pricing__card" key={plan.id}>
               {plan.name === "Anı Topla Pro" && (
                 <span className="cal">
-                  <Image src={callOut} alt="cal_out" width={152} height={54} />{" "}
+                  <Image src={callOut} alt="cal_out" width={152} height={54} />
                 </span>
               )}
               <div className="pricing__price">{plan.formattedPrice}</div>
               <div className="pricing__plan">{plan.name}</div>
-              {/* <p className="pricing__description">Lorem ipsum</p> */}
               <ul className="pricing__features">
                 {plan.benefits.map((rule: string, index: number) => (
                   <li key={index}>
@@ -54,14 +141,46 @@ const Pricing = () => {
                   </li>
                 ))}
               </ul>
-              {pathName !== "/" && userPlan?.id === plan.id 
-                ?<p className="pricing__button">Mevcut Plan</p>
-                :<Link href={"/login"} className="pricing__button">Bu planı Seç</Link>
-                }
-              
+              {pathName !== "/" && userPlan?.id === plan.id ? (
+                <p className="pricing__button">Mevcut Plan</p>
+              ) : pathName !== "/" ? (
+                <button
+                  className="pricing__button"
+                  onClick={() => handlePlanSelect(plan.price_id)}
+                >
+                  Bu planı seç
+                </button>
+              ) : (
+                <Link href="/login" className="pricing__button">
+                  Bu planı seç
+                </Link>
+              )}
             </div>
           ))}
       </div>
+
+      {pathName !== "/" && (
+        <div className="pricing__refcode">
+          <h4 className="pricing__refcode-title">Referans Kodun Var mı?</h4>
+          <div className="pricing__refcode-wrapper">
+            <input
+              type="text"
+              placeholder="Referans kodunu gir"
+              className="pricing__refcode-input"
+              value={refCode}
+              onChange={(e) => setRefCode(e.target.value)}
+            />
+            <button
+              className="pricing__refcode-button"
+              onClick={handleCheckRefCode}
+              disabled={checkingRef}
+              style={{opacity: checkingRef ? ".7" : "1"}}
+            >
+              Kodu Uygula
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

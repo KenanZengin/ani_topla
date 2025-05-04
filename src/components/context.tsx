@@ -89,10 +89,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     
           const eventData = await eventRes.json();
           setUserEvent(eventData.Data);
-          if(!eventData.Data.date || !eventData.Data.title){
-            router.push("/create-event")
-          }else{
-            router.push("/dashboard")
+          console.log("test",!sessionStorage.getItem("hasRedirected"));
+          
+          if (!sessionStorage.getItem("hasRedirected")) {
+            if (!eventData.Data.date || !eventData.Data.title) {
+              sessionStorage.setItem("hasRedirected", "true");
+              router.push("/create-event");
+            } else {
+              sessionStorage.setItem("hasRedirected", "true");
+              router.push("/dashboard");
+            }
           }
     
           const planRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/my-plan?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}`, {
@@ -159,7 +165,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setPlanModal,
     planModal,
     globalSnackBar, 
-    setGlobalSnackbar
+    setGlobalSnackbar,
+    setUserEvent
   };
 
   return(

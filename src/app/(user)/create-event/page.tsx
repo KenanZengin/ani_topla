@@ -5,15 +5,38 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import EventImg from "../../../../public/event.png";
 import { useAppContext } from "@/components/context";
+import {
+  Button,
+  Typography,
+  IconButton,
+  Modal,
+  Box,
+  Stack,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 const CreateEvent = () => {
   const router = useRouter();
-  const { authToken, setGlobalSnackbar } = useAppContext();
+  const { authToken, setGlobalSnackbar, userEvent, setUserEvent } =
+    useAppContext();
+  console.log("userEvent", userEvent);
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  console.log("userEvent", userEvent);
+
+  useEffect(() => {
+    if (userEvent) {
+      setTitle(userEvent.title ? userEvent.title : "");
+      setDate(userEvent.date ? userEvent.date.split(" ")[0] : "");
+      setSubtitle(userEvent.subtitle ? userEvent.subtitle : "");
+    }
+  }, [userEvent]);
 
   const handleSubmit = async () => {
     if (!title || !date) {
@@ -38,13 +61,18 @@ const CreateEvent = () => {
           },
           body: JSON.stringify({
             title,
-            subtitle: "",
+            subtitle,
             date: `${date} 19:00:00`,
           }),
         }
       );
 
       if (res.ok) {
+        const newEvent = userEvent;
+        newEvent.title = title;
+        newEvent.subtitle = subtitle;
+        newEvent.date = `${date} 19:00:00`;
+        setUserEvent(newEvent);
         router.push("/dashboard");
         setTimeout(() => {
           setGlobalSnackbar({
@@ -70,6 +98,14 @@ const CreateEvent = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleInstagramClick = () => {
+    window.open("https://www.instagram.com/anitopla.co/", "_blank");
+  };
+
+  const handleWhatsAppClick = () => {
+    window.open("https://wa.me/905551112233", "_blank");
   };
 
   return (
@@ -113,7 +149,11 @@ const CreateEvent = () => {
             type="date"
             className="event-settings__input"
             value={date}
+            readOnly={userEvent?.date}
             onChange={(e) => setDate(e.target.value)}
+            onClick={() => {
+              if (userEvent && userEvent?.date) setContactOpen(true);
+            }}
           />
 
           <p className="event-settings__info-box">
@@ -141,6 +181,72 @@ const CreateEvent = () => {
           />
         </div>
       </div>
+      <Modal open={contactOpen} onClose={() => setContactOpen(false)}>
+        <Box
+          sx={{
+            backgroundColor: "#fff",
+            p: 4,
+            borderRadius: 2,
+            width: 400,
+            maxWidth: "90%",
+            mx: "auto",
+            my: "20vh",
+            boxShadow: 24,
+            outline: "none",
+            position: "relative",
+            textAlign: "center",
+          }}
+        >
+          <IconButton
+            onClick={() => setContactOpen(false)}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "grey.500",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          <Typography variant="h6" fontWeight="bold" mb={2}>
+            Etkinlik Tarihi Değiştirilemez
+          </Typography>
+          <Typography variant="body1" mb={4} color="text.secondary">
+            Etkinliğinize ait tarih sistem tarafından sabitlenmiştir. Değişiklik
+            talebiniz varsa bizimle aşağıdaki kanallardan iletişime
+            geçebilirsiniz.
+          </Typography>
+
+          <Stack direction="column" spacing={2}>
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<InstagramIcon />}
+              onClick={handleInstagramClick}
+              sx={{
+                backgroundColor: "#E1306C",
+                "&:hover": { backgroundColor: "#c62857" },
+              }}
+            >
+              Instagram Üzerinden Ulaş
+            </Button>
+
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<WhatsAppIcon />}
+              onClick={handleWhatsAppClick}
+              sx={{
+                backgroundColor: "#25D366",
+                "&:hover": { backgroundColor: "#1DA851" },
+              }}
+            >
+              WhatsApp Üzerinden Ulaş
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
     </div>
   );
 };

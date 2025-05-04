@@ -1,6 +1,13 @@
 "use client";
 import React from "react";
-import { Modal, Box, Typography, Button, Stack, IconButton } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  Stack,
+  IconButton,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -16,7 +23,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ open, handleClose }) => {
   };
 
   const handleWhatsAppClick = () => {
-    window.open("https://wa.me/İlker", "_blank"); 
+    window.open("https://wa.me/İlker", "_blank");
   };
 
   return (
@@ -36,7 +43,6 @@ const ContactModal: React.FC<ContactModalProps> = ({ open, handleClose }) => {
           textAlign: "center",
         }}
       >
-        {/* Sağ üst köşe çarpı butonu */}
         <IconButton
           onClick={handleClose}
           sx={{

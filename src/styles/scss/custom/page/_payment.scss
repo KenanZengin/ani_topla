@@ -1,0 +1,118 @@
+
+.payment-success {
+  position: relative;
+  padding: 0 3rem;
+  border-radius: 16px;
+  .payment-success__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #47c27f;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .payment-success__container {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .payment-success__message {
+    font-size: 18px;
+    color: #4d4d4d;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .payment-success__button {
+    margin-top: 24px;
+    padding: 12px 24px;
+    background-color: #47c27f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+
+    &:hover {
+      background-color: #39a66d;
+    }
+
+    &:active {
+      background-color: #2e8f5f;
+    }
+  }
+
+  .payment-success__icon {
+    font-size: 40px;
+    color: #47c27f;
+    margin-bottom: 20px;
+  }
+}
+.payment-fail {
+  padding: 0 3rem;
+  border-radius: 16px;
+  .payment-fail__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e14c47;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .payment-fail__container {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .payment-fail__message {
+    font-size: 18px;
+    color: #4d4d4d;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .payment-fail__button {
+    margin-top: 24px;
+    padding: 12px 24px;
+    background-color: #e14c47;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+
+    &:hover {
+      background-color: #c63d39;
+    }
+
+    &:active {
+      background-color: #a9322e;
+    }
+  }
+
+  .payment-fail__icon {
+    font-size: 40px;
+    color: #e14c47;
+    margin-bottom: 20px;
+  }
+}

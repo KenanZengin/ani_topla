@@ -1,14 +1,11 @@
 "use client";
 import { QRCode } from "antd";
 import React, { useEffect, useState } from "react";
-import Logo from "../../../../public/Logo.png";
 import Gif from "../../../../public/sew.gif";
-
 import { useAppContext } from "@/components/context";
 import Link from "next/link";
-import { Alert, Snackbar,Slide } from '@mui/material';
-import type { SlideProps } from '@mui/material';
-
+import { Alert, Snackbar, Slide } from "@mui/material";
+import type { SlideProps } from "@mui/material";
 
 const DashboardPage = () => {
   const { qrURL } = useAppContext();
@@ -109,10 +106,9 @@ const DashboardPage = () => {
       await navigator.clipboard.writeText(qrURL);
       setOpen(true);
     } catch (err) {
-      console.error('Kopyalama başarısız:', err);
+      console.error("Kopyalama başarısız:", err);
     }
   };
-
 
   return (
     <div className="dashboard-container">
@@ -135,12 +131,10 @@ const DashboardPage = () => {
 
           <div className="dashboard-link-box">
             <span className="dashboard-link-text">{qrURL}</span>
-            <button onClick={handleCopy}>
-              Linki Kopyala
-            </button>
+            <button onClick={handleCopy}>Linki Kopyala</button>
           </div>
           <div className="dashboard-actions">
-            <Link href={"/album"}  rel="noopener noreferrer">
+            <Link href={"/album"} rel="noopener noreferrer">
               Dijital Albüme Git
             </Link>
           </div>
@@ -187,25 +181,25 @@ const DashboardPage = () => {
           <button onClick={handleDownloadQR}>QR Kodunu İndir</button>
         </section>
       </main>
-     
+
       <Snackbar
         open={open}
         autoHideDuration={3000}
         onClose={() => setOpen(false)}
         TransitionComponent={SlideTransition}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
           onClose={() => setOpen(false)}
           severity="success"
           variant="filled"
           sx={{
-            backgroundColor: 'var(--color-bg)',
-            color: 'var(--color-primary)',
-            boxShadow: 'var(--shadow)',
-            borderRadius: 'var(--radius)',
+            backgroundColor: "var(--color-bg)",
+            color: "var(--color-primary)",
+            boxShadow: "var(--shadow)",
+            borderRadius: "var(--radius)",
             fontWeight: 500,
-            fontSize: '0.95rem',
+            fontSize: "0.95rem",
           }}
         >
           Link kopyalandı!
@@ -215,7 +209,7 @@ const DashboardPage = () => {
   );
 };
 
-function SlideTransition(props:SlideProps) {
+function SlideTransition(props: SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 export default DashboardPage;

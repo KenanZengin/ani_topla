@@ -4,7 +4,16 @@ import { useAppContext } from "@/components/context";
 import React, { useState, useEffect } from "react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { Modal, Box, Typography, Alert } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Alert,
+  Dialog,
+  DialogContent,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Album = () => {
   const { authToken } = useAppContext();
@@ -15,6 +24,8 @@ const Album = () => {
   const [limit, setLimit] = useState(12);
   const [downloading, setDownloading] = useState(false);
   const [noMoreData, setNoMoreData] = useState(false);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
+  const [fullscreenIndex, setFullscreenIndex] = useState(0);
 
   const devKey = "123AniToplaStripeDevTest1234567234";
 
@@ -83,6 +94,15 @@ const Album = () => {
     }
   };
 
+  const handleOpenFullscreen = (index: number) => {
+    setFullscreenIndex(index);
+    setFullscreenOpen(true);
+  };
+
+  const handleCloseFullscreen = () => {
+    setFullscreenOpen(false);
+  };
+
   return (
     <div className="album-page">
       <Modal open={downloading}>
@@ -104,6 +124,45 @@ const Album = () => {
           </Typography>
         </Box>
       </Modal>
+
+      <Dialog
+        open={fullscreenOpen}
+        onClose={handleCloseFullscreen}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogContent style={{ position: "relative", padding: 0 }}>
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseFullscreen}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              zIndex: 1,
+              color: "white",
+              backgroundColor: "rgba(0,0,0,0.5)",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          {files.length > 0 && (
+            <div style={{ width: "100%", textAlign: "center", backgroundColor: "black" }}>
+              {(() => {
+                const file = files[fullscreenIndex];
+                const ext = getExtensionFromUrl(file.url);
+                const isVideo = ["mp4", "webm", "mov"].includes(ext);
+                return isVideo ? (
+                  <video src={file.url} controls style={{ width: "100%", height: "auto" }} />
+                ) : (
+                  <img src={file.url} style={{ width: "100%", height: "auto" }} />
+                );
+              })()}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <div className="album-page__topbar">
         <h3 className="album-page__title">Dijital Albüm</h3>
@@ -131,12 +190,17 @@ const Album = () => {
             </Alert>
           )}
           <div className="album-page__grid">
-            {files.map((file) => {
+            {files.map((file, index) => {
               const ext = getExtensionFromUrl(file.url);
               const isVideo = ["mp4", "webm", "mov"].includes(ext);
 
               return (
-                <div className="album-page__card" key={file.id}>
+                <div
+                  className="album-page__card"
+                  key={file.id}
+                  onClick={() => handleOpenFullscreen(index)}
+                  style={{ cursor: "pointer" }}
+                >
                   {isVideo ? (
                     <video
                       src={file.url}
@@ -154,9 +218,13 @@ const Album = () => {
                   )}
                   <div className="album-page__info">
                     <p>{file.created_at.split(" ")[0]}</p>
+                    {file?.uploader  && (
+                      <p className="album-page__uploader">Yükleyen: {file.uploader }</p>
+                    )}
                     <button
                       className="album-page__download-btn"
-                      onClick={async () => {
+                      onClick={async (e) => {
+                        e.stopPropagation();
                         try {
                           const res = await fetch(file.url, { mode: "cors" });
                           const blob = await res.blob();

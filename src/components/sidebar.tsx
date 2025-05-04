@@ -26,8 +26,9 @@ import AddIcon from "@mui/icons-material/Add";
 const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { setAuthToken, user, setGlobalSnackbar } = useAppContext();
-
+  const { setAuthToken, user, setGlobalSnackbar, userEvent } = useAppContext();
+  console.log("userEvent",userEvent);
+  
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -41,6 +42,7 @@ const Sidebar = () => {
   const logoutUser = () => {
     Cookies.remove("auth_token");
     localStorage.removeItem("user");
+    sessionStorage.removeItem("hasRedirected");
     setAuthToken(null);
     router.push("/");
     setTimeout(() => {
@@ -77,7 +79,7 @@ const Sidebar = () => {
           href="/create-event"
           className={pathname === "/create-event" ? "active" : ""}
         >
-          <Settings /> Etkinlik Oluştur
+          <Settings /> {userEvent && (userEvent.title || userEvent.date) ? "Etkinliklerim" : "Etkinlik Oluştur"}
         </Link>
         <Link
           href="/user-plan"
@@ -117,19 +119,19 @@ const Sidebar = () => {
                 {user?.fullname ? user.fullname : user?.email} - Organizer
               </Typography>
             </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
+             {/*<MenuItem onClick={handleClose}>
+             <ListItemIcon>
                 <AddIcon sx={{ color: "#f28500" }} fontSize="small" />
               </ListItemIcon>
-              <Link href={"/create-event"}>
+               <Link href={"/create-event"}>
                 <Typography
                   fontWeight={500}
                   className="event-toggle__menu-text"
                 >
                   Etkinlik oluştur
                 </Typography>
-              </Link>
-            </MenuItem>
+              </Link> 
+            </MenuItem>*/}
           </Menu>
         </div>
         {/* <Link href="#" className="sidebar__link">
