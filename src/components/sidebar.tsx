@@ -21,12 +21,16 @@ import {
   ListItemIcon,
   Typography,
 } from "@mui/material";
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+
 import AddIcon from "@mui/icons-material/Add";
+import ContactModal from "./contact-modal";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { setAuthToken, user, setGlobalSnackbar, userEvent } = useAppContext();
+  const [openContactModal, setOpen] = useState(false);
   console.log("userEvent",userEvent);
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -87,6 +91,12 @@ const Sidebar = () => {
         >
           <CreditCard /> Planlarım
         </Link>
+        <button
+          onClick={() => {setOpen(true)}}
+          className={openContactModal? "active" : ""}
+        >
+          <SupportAgentIcon /> İletişim
+        </button>
       </nav>
       <div className="sidebar__footer">
         <div className="sidebar__event-switch">
@@ -143,6 +153,7 @@ const Sidebar = () => {
           <ExitToApp /> Çıkış Yap{" "}
         </button>
       </div>
+      <ContactModal open={openContactModal} handleClose={() => setOpen(false)} />
     </aside>
   );
 };

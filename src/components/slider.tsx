@@ -5,8 +5,19 @@ import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import img1 from "../../public/wedding.png";
 import Image from "next/image";
+
+
+
+import swiperImg from "../../public/2.png";
+import swiperImg2 from "../../public/3.png";
+import swiperImg3 from "../../public/10.png";
+import swiperImg4 from "../../public/5.png";
+import swiperImg5 from "../../public/6.png";
+import swiperImg6 from "../../public/7.png";
+import swiperImg7 from "../../public/8.png";
+import swiperImg8 from "../../public/9.png";
+
 
 const WeddingSlider: React.FC = () => {
   return (
@@ -23,7 +34,7 @@ const WeddingSlider: React.FC = () => {
         <SwiperSlide>
           <div className="slide-img">
             <Image
-              src={img1}
+              src={swiperImg5}
               alt="Düğün Resim 1"
               className="wedding-slider__image"
               fill
@@ -33,7 +44,7 @@ const WeddingSlider: React.FC = () => {
         <SwiperSlide>
           <div className="slide-img">
             <Image
-              src={img1}
+              src={swiperImg}
               alt="Düğün Resim 1"
               className="wedding-slider__image"
               fill
@@ -43,7 +54,7 @@ const WeddingSlider: React.FC = () => {
         <SwiperSlide>
           <div className="slide-img">
             <Image
-              src={img1}
+              src={swiperImg2}
               alt="Düğün Resim 1"
               className="wedding-slider__image"
               fill
@@ -53,7 +64,47 @@ const WeddingSlider: React.FC = () => {
         <SwiperSlide>
           <div className="slide-img">
             <Image
-              src={img1}
+              src={swiperImg3}
+              alt="Düğün Resim 1"
+              className="wedding-slider__image"
+              fill
+            />
+          </div>{" "}
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide-img">
+            <Image
+              src={swiperImg6}
+              alt="Düğün Resim 1"
+              className="wedding-slider__image"
+              fill
+            />
+          </div>{" "}
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide-img">
+            <Image
+              src={swiperImg4}
+              alt="Düğün Resim 1"
+              className="wedding-slider__image"
+              fill
+            />
+          </div>{" "}
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide-img">
+            <Image
+              src={swiperImg7}
+              alt="Düğün Resim 1"
+              className="wedding-slider__image"
+              fill
+            />
+          </div>{" "}
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide-img">
+            <Image
+              src={swiperImg8}
               alt="Düğün Resim 1"
               className="wedding-slider__image"
               fill

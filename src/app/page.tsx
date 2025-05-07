@@ -23,6 +23,7 @@ import img13 from "../../public/avatar6.png";
 import ContactModal from "@/components/contact-modal";
 import Footer from "@/backbone/footer";
 
+
 const HomePage: React.FC = () => {
 
   const [open, setOpen] = useState(false);

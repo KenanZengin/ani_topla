@@ -16,7 +16,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 const Album = () => {
-  const { authToken } = useAppContext();
+
+  const { authToken, setGlobalSnackbar } = useAppContext();
 
   const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,6 @@ const Album = () => {
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
 
-  const devKey = "123AniToplaStripeDevTest1234567234";
 
   const fetchFiles = async () => {
     if (!authToken) return;
@@ -35,7 +35,7 @@ const Album = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files?devKey=${devKey}&page=${page}&limit=${limit}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files?devKey=${process.env.NEXT_PUBLIC_DEV_KEY}&page=${page}&limit=${limit}`,
         {
           method: "GET",
           headers: {
@@ -68,28 +68,48 @@ const Album = () => {
     return url.split("?")[0].split(".").pop()?.toLowerCase() || "jpg";
   };
 
-  const downloadAll = async () => {
+  const handleDownload = async () => {
     setDownloading(true);
     try {
-      const zip = new JSZip();
-      const folder = zip.folder("album");
-
-      await Promise.all(
-        files.map(async (file) => {
-          const response = await fetch(file.url, { mode: "cors" });
-          if (!response.ok) throw new Error(`Dosya indirilemedi: ${file.url}`);
-          const blob = await response.blob();
-          const ext = getExtensionFromUrl(file.url);
-          folder?.file(`${file.id}.${ext}`, blob);
-        })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/download`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": authToken,
+          },
+        }
       );
 
-      const content = await zip.generateAsync({ type: "blob" });
-      saveAs(content, "album.zip");
-    } catch (err) {
-      console.error("Toplu indirme hatası:", err);
-      alert("Tümünü indirme başarısız oldu. Lütfen tekrar deneyin.");
-    } finally {
+      if (!response.ok) {
+        setGlobalSnackbar({
+          state: true,
+          mess: "İndirme işlemi başarısız daha sonra tekrar deneyin!",
+          mode: "error",
+        });
+        return
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${"anitopla".replace(/\//g, "_")}.zip`);
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download error:", error);
+      setGlobalSnackbar({
+        state: true,
+        mess: "İndirme işlemi başarısız daha sonra tekrar deneyin!",
+        mode: "error",
+      });
+    } finally{
       setDownloading(false);
     }
   };
@@ -125,13 +145,11 @@ const Album = () => {
         </Box>
       </Modal>
 
-      <Dialog
+      <Modal
         open={fullscreenOpen}
-        onClose={handleCloseFullscreen}
-        maxWidth="lg"
-        fullWidth
+        className="dialog_album"
       >
-        <DialogContent style={{ position: "relative", padding: 0 }}>
+        <div style={{ position: "relative", padding: "2rem", height: "100%" }}>
           <IconButton
             aria-label="close"
             onClick={handleCloseFullscreen}
@@ -146,23 +164,22 @@ const Album = () => {
           >
             <CloseIcon />
           </IconButton>
-
           {files.length > 0 && (
-            <div style={{ width: "100%", textAlign: "center", backgroundColor: "black" }}>
+            <div style={{ width: "100%",height:"100%", textAlign: "center", backgroundColor: "black" }}>
               {(() => {
                 const file = files[fullscreenIndex];
                 const ext = getExtensionFromUrl(file.url);
                 const isVideo = ["mp4", "webm", "mov"].includes(ext);
                 return isVideo ? (
-                  <video src={file.url} controls style={{ width: "100%", height: "auto" }} />
+                  <video src={file.url} controls style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                 ) : (
-                  <img src={file.url} style={{ width: "100%", height: "auto" }} />
+                  <img src={file.url} style={{ width: "100%", height: "100%",objectFit:"contain" }} />
                 );
               })()}
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </div>
+      </Modal>
 
       <div className="album-page__topbar">
         <h3 className="album-page__title">Dijital Albüm</h3>
@@ -245,7 +262,7 @@ const Album = () => {
       )}
 
       {files.length > 0 && (
-        <button className="album-page__download-all" onClick={downloadAll}>
+        <button className="album-page__download-all" onClick={handleDownload}>
           Tümünü İndir (ZIP)
         </button>
       )}

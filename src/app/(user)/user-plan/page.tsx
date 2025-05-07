@@ -24,7 +24,7 @@ const CurrentPlan = () => {
             </ul>
           </div>
 
-          <div className="current-plan__rules">
+          {/* <div className="current-plan__rules">
             <h4>Kurallar:</h4>
             <ul>
               <li>Maksimum Dosya: {userPlan.rules?.maxFile}</li>
@@ -40,7 +40,7 @@ const CurrentPlan = () => {
                 {userPlan.rules?.maxFileUploadBeforeEvent}
               </li>
             </ul>
-          </div>
+          </div> */}
           {userPlan.id === "free" && (
             <div className="current-plan__upgrade">
               <button
